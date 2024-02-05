@@ -12,9 +12,9 @@
         /// <summary>
         /// Get elements that equals filter function
         /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        public IEnumerable<T> GetElementsWithFilter(Func<T, Boolean> filter);
+        /// <param name="filter">Filter function</param>
+        /// <returns>IQueryable of elements - because we want to filter data on database</returns>
+        public Task<IQueryable<T>> GetElementsWithFilter(Func<T, Boolean> filter);
 
         /// <summary>
         /// Get element by key
