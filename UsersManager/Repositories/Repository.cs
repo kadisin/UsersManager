@@ -42,7 +42,7 @@ namespace UsersManager.Repositories
 
         public async Task<T> GetElementByKey(int id)
         {
-            var element = _dbSet.Find(id);
+            var element = await _dbSet.Find(id);
             if(element != null)
             {
                 return element;
@@ -53,14 +53,14 @@ namespace UsersManager.Repositories
             }    
         }
 
-        public IEnumerable<T> GetElementsWithFilter(Func<T, bool> filter)
+        public async Task<IQueryable<T>> GetElementsWithFilter(Func<T, bool> filter)
         {
-            var elements = _dbSet.Where(x => filter(x) == true);
-            return  elements.AsEnumerable<T>();
+            return await _dbSet.Where(x => filter(x) == true);
         }
 
         public async Task<int> UpdateElement(T element)
         {
+            //tu cos dodac update - https://stackoverflow.com/questions/39131108/generic-insert-or-update-for-entity-framework
             _context.Entry(element).State = EntityState.Modified;
             return await _context.SaveChangesAsync();
         }
