@@ -13,6 +13,7 @@
 <p> Generic Repository Pattern </p>
 <p> Model-View-Controller </p>
 <p> Code first design (Entity Framework) </p>
+<p> Abstraction </p>
 
 </body>
 </html>
