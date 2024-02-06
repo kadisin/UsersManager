@@ -1,4 +1,6 @@
-﻿namespace UsersManager.Repositories
+﻿using System.Linq.Expressions;
+
+namespace UsersManager.Repositories
 {
     // Abstract repository working on T element
     public interface IRepository<T> 
@@ -12,9 +14,9 @@
         /// <summary>
         /// Get elements that equals filter function
         /// </summary>
-        /// <param name="filter">Filter function</param>
+        /// <param name="predicate">Predicate (filter function)</param>
         /// <returns>IQueryable of elements - because we want to filter data on database</returns>
-        public Task<IQueryable<T>> GetElementsWithFilter(Func<T, Boolean> filter);
+        public Task<IEnumerable<T>> GetElementsWithFilter(Expression<Func<T, bool>> predicate);
 
         /// <summary>
         /// Get element by key

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace UsersManager.Repositories
 {
@@ -6,27 +7,25 @@ namespace UsersManager.Repositories
     {
 
         private readonly DbContext _context;
-        private readonly DbSet<T> _dbSet;
 
 
         public Repository(DbContext context)
         {
             _context = context;
-            _dbSet = _context.Set<T>();
         }
 
-        public async Task<int> AddElement(T element)
+        public virtual async Task<int> AddElement(T element)
         {
-            _dbSet.Add(element);
+            await _context.Set<T>().AddAsync(element);
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<int> DeleteElement(T element)
+        public virtual async Task<int> DeleteElement(T element)
         {
-            var isElementExis = _dbSet.Find(element);
+            var isElementExis = await _context.Set<T>().FindAsync(element);
             if(isElementExis != null)
             {
-                _dbSet.Remove(element);
+                _context.Set<T>().Remove(element);
                 return await _context.SaveChangesAsync();
             }
             else
@@ -35,14 +34,14 @@ namespace UsersManager.Repositories
             }    
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public virtual async Task<IEnumerable<T>> GetAll()
         {
-            return  await _dbSet.AsNoTracking().ToListAsync();
+            return  await _context.Set<T>().AsNoTracking().ToListAsync();
         }
 
-        public async Task<T> GetElementByKey(int id)
+        public virtual async Task<T> GetElementByKey(int id)
         {
-            var element = await _dbSet.Find(id);
+            var element = await _context.Set<T>().FindAsync(id);
             if(element != null)
             {
                 return element;
@@ -53,15 +52,14 @@ namespace UsersManager.Repositories
             }    
         }
 
-        public async Task<IQueryable<T>> GetElementsWithFilter(Func<T, bool> filter)
+        public virtual async Task<IEnumerable<T>> GetElementsWithFilter(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.Where(x => filter(x) == true);
+            return await _context.Set<T>().AsQueryable().Where(predicate).ToListAsync();
         }
 
-        public async Task<int> UpdateElement(T element)
+        public virtual async Task<int> UpdateElement(T element)
         {
-            //tu cos dodac update - https://stackoverflow.com/questions/39131108/generic-insert-or-update-for-entity-framework
-            _context.Entry(element).State = EntityState.Modified;
+            _context.Set<T>().Update(element);
             return await _context.SaveChangesAsync();
         }
     }
